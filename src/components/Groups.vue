@@ -8,57 +8,18 @@
                 <div class="card-body">
                     <div>Bees</div>
                     <br/>
-                    <template>
                         <v-row>
-                            <v-dialog
-                            v-model="dialog"
-                            persistent
-                            max-width="600px"
-                            >
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                    color="primary"
-                                    dark
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    @click="dialog = true"
-                                    >
-                                    New Group
-                                    </v-btn>
-                                </template>
-                                <v-card>
-                                    <v-card-title>
-                                        <span class="headline">New Group</span>
-                                    </v-card-title>
-                                    <v-card-text>
-                                        <v-container>
-                                                <v-text-field
-                                                label="Group Name"
-                                                required
-                                                ></v-text-field>
-                                        </v-container>
-                                    </v-card-text>
-                                    <v-card-actions>
-                                        <v-spacer></v-spacer>
-                                        <v-btn
-                                            color="blue darken-1"
-                                            text
-                                            @click="dialog = false"
-                                        >
-                                            Close
-                                        </v-btn>
-                                        <v-btn
-                                            color="blue darken-1"
-                                            text
-                                            @click="dialog = false"
-                                        >
-                                            Save
-                                        </v-btn>
-                                    </v-card-actions>
-                                </v-card>
-                            </v-dialog>
+                            <v-btn @click="prompt=!prompt">New Group</v-btn>
                         </v-row>
-                    </template>
+                    <v-dialog v-model="prompt">
+                        <v-card>
+                            <v-card-title>AAAAAAAAAAAAAAAAAAAAA</v-card-title>
+                            <v-card-text>
+                                <v-text-field v-model="groupName" label="Enter group name here"></v-text-field>
+                            </v-card-text>
+                        </v-card>
+
+                    </v-dialog>
                 </div>
             </template>
             <template v-else>
@@ -77,10 +38,12 @@ export default {
         ...mapGetters({
         user: "user"
         }),
-    }
-//,
-//     data: () => ({
-//         dialog: false,
-//     }),
-   };
+    },
+    data: () => ({
+        dialog: false,
+        prompt: false,
+    }),
+    methods: {
+   },
+}
 </script>
