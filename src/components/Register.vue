@@ -71,7 +71,7 @@
 
 
 <script>
-import firebase from "firebase";
+import firebaseApp from '../firebase';
 
 export default {
   data() {
@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     submit() {
-      firebase
+      firebaseApp
         .auth()
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then(data => {

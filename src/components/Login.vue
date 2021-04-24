@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import firebase from "firebase";
+import firebaseApp from '../firebase';
 import router from "../routes/index";
 
 export default {
@@ -68,7 +68,7 @@ export default {
   },
   methods: {
     submit() {
-      firebase
+      firebaseApp
         .auth()
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then(function() {
