@@ -3,10 +3,15 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card">
-          <div class="card-header">Groups</div>
-          <div class="card-body">
-            <div>Your Groups:</div>
-          </div>
+            <template v-if="user.loggedIn">
+                <div class="card-header">Your Groups</div>
+                <div class="card-body">
+                    <div>Bees</div>
+                </div>
+            </template>
+            <template v-else>
+                <div class="alert alert-danger" role="alert">Please log in to access your groups</div>
+            </template>
         </div>
       </div>
     </div>
