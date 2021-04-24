@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Login from '../components/Login'
 import Register from '../components/Register'
 import Dashboard from '../components/Dashboard'
+import Groups from '../components/Groups'
 
 Vue.use(Router)
 
@@ -24,6 +25,11 @@ const router = new Router({
         path: '/dashboard',
         name: 'Dashboard',
         component: Dashboard
+    },
+    {
+        path: '/groups',
+        name: 'Groups',
+        component: Groups
     }
 ]
 });

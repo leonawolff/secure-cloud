@@ -3,10 +3,9 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card">
-          <div class="card-header">Dashboard</div>
+          <div class="card-header">Groups</div>
           <div class="card-body">
-            <div v-if="user" class="alert alert-success" role="alert">You are logged in!</div>
-            <button v-if="user" v-on:click="counter += 1">View Groups</button>
+            <div>Your Groups:</div>
           </div>
         </div>
       </div>
