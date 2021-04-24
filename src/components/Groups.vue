@@ -7,6 +7,10 @@
                 <div class="card-header">Your Groups</div>
                 <div class="card-body">
                     <div>Bees</div>
+                    <br/>
+                    <div class="text-center">
+                        <v-btn elevation="2" v-bind="attrs" v-on="on">New Group</v-btn>
+                    </div>
                 </div>
             </template>
             <template v-else>
@@ -28,3 +32,12 @@ export default {
   }
 };
 </script>
+
+
+
+// function makeGroup(title, userEmail){
+//     return {
+//         title: title,
+//         userEmail: userEmail
+//     }
+// }
