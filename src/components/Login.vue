@@ -54,6 +54,7 @@
 
 <script>
 import firebase from "firebase";
+import router from "../routes/index";
 
 export default {
   data() {
@@ -70,10 +71,10 @@ export default {
       firebase
         .auth()
         .signInWithEmailAndPassword(this.form.email, this.form.password)
-        .then(data => {
-          this.$router.replace({ name: "Dashboard" });
+        .then(function() {
+          router.push({ path: 'dashboard' })
         })
-        .catch(err => {
+        .catch(function(err) {
           this.error = err.message;
         });
     }
