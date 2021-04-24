@@ -21,7 +21,7 @@ const router = new Router({
         component: Register
     },
     {
-        path: '/',
+        path: '/dashboard',
         name: 'Dashboard',
         component: Dashboard
     }
