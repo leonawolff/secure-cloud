@@ -1,10 +1,12 @@
 <template>
+<v-app>
   <div>
     <navbar></navbar>
-    <main class="py-4">
+    <v-content>
       <router-view></router-view>
-    </main>
+    </v-content>
   </div>
+  </v-app>
 </template>
 
 <script>

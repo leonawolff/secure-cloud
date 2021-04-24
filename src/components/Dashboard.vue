@@ -14,7 +14,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-export default {
+export default { name:'Dashboard',
   computed: {
     // map `this.user` to `this.$store.getters.user`
     ...mapGetters({

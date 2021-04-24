@@ -8,7 +8,7 @@ Vue.use(Router)
 
 const router = new Router({
     mode: 'history',
-    base: process.env.BASE_URL,
+    base: '',
     routes: [
         {
         path: '/login',
@@ -21,7 +21,7 @@ const router = new Router({
         component: Register
     },
     {
-        path: '/dashboard',
+        path: '/',
         name: 'Dashboard',
         component: Dashboard
     }
