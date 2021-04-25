@@ -6,7 +6,13 @@
             <template v-if="user.loggedIn">
                 <div class="card-header">Your Groups</div>
                 <div class="card-body">
-                    <div>wee</div>
+                    <ul id="v-for-object">
+                        <li v-for="value in this.groups" :key="value.name">
+                            <router-link :to="{ name: 'Group', params: { groupName: value.name }}">
+                                {{value.name}}
+                            </router-link >
+                        </li>
+                    </ul>
                     <br/>
                     <template>
                         <v-row>
@@ -44,7 +50,14 @@
                                         <v-btn
                                             color="blue darken-1"
                                             text
-                                            @click="dialog = false; saveGroup(groupName)"
+                                            @click="dialog = false;"
+                                        >
+                                            Cancel
+                                        </v-btn>
+                                        <v-btn
+                                            color="blue darken-1"
+                                            text
+                                            @click="dialog = false; saveGroup(groupName); getGroups()"
                                         >
                                             Save
                                         </v-btn>
@@ -75,11 +88,16 @@ export default {
     },
     data: () => ({
         dialog: false,
+        groups: [],
     }),
+    mounted(){
+            this.getGroups();
+        },
     methods: {
         saveGroup: function (groupName) {
             firebaseApp.firestore().collection("groups").doc(groupName).set({
                 name: groupName,
+                userNames: this.user.data.displayName,
                 userEmails: this.user.data.email,
             })
             .then(() => {
@@ -90,9 +108,31 @@ export default {
             });
         },
         getGroups: function () {
-            var allGroups = firebaseApp.firestore().collection("groups");
-            var groups = allGroups.where("userEmails" == this.user.data.email);
-            console.log(groups);
+            this.groups = [];
+            console.log("Loading groups");
+            firebaseApp.firestore().collection("groups").where("userEmails", "==", this.user.data.email)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    this.groups.push(doc.data());
+                    console.log(this.groups);
+                });
+            })
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+            });
+            firebaseApp.firestore().collection("groups").where("userEmails", "array-contains", this.user.data.email)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    this.groups.push(doc.data());
+                    console.log(this.groups);
+                });
+            })
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+            });
+
         }
    },
 }
