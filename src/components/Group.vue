@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 <template>
   <div class="container">
     <div class="row justify-content-center">
@@ -80,11 +81,12 @@
                             </v-dialog>
                     <v-divider></v-divider>
                     <div>Group Files</div>
+                    <br/>
                     <div v-if="this.groupFiles != null && this.groupFiles.length > 1">
                         <ul id="v-for-object">
-                            <li v-for="value in this.groupFiles.name" :key="value">
+                            <li v-for="i in this.groupFiles" :key="i">
                                 <div>
-                                    {{value}}
+                                    {{i.name}}
                                 </div>
                             </li>
                         </ul>
@@ -106,8 +108,63 @@
                     outline
                     @click="getInputFile(uploadedFile)"
                     >
-                    Encrypt File
-                </v-btn>
+                        Upload
+                    </v-btn>
+                    <br/>
+                    <v-divider></v-divider>
+                    <br/>
+                    <template>
+                        <v-row justify="center">
+                            <v-dialog
+                            v-model="dialog2"
+                            scrollable
+                            max-width="300px"
+                            >
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                color="primary"
+                                dark
+                                v-bind="attrs"
+                                v-on="on"
+                                >
+                                Choose Download File
+                                </v-btn>
+                            </template>
+                            <v-card>
+                                <v-card-title>Choose file to download</v-card-title>
+                                <v-divider></v-divider>
+                                <v-card-text style="height: 300px;">
+                                <v-radio-group
+                                    v-model="downloadFileName"
+                                    column
+                                >
+                                    <ul v-for="i in this.groupFiles" :key="i">
+                                        <v-radio :label="i.name" :value="i.name">
+                                        </v-radio>
+                                    </ul>
+                                </v-radio-group>
+                                </v-card-text>
+                                <v-divider></v-divider>
+                                <v-card-actions>
+                                <v-btn
+                                    color="blue darken-1"
+                                    text
+                                    @click="dialog2 = false"
+                                >
+                                    Close
+                                </v-btn>
+                                <v-btn
+                                    color="blue darken-1"
+                                    text
+                                    @click="downloadFile(); dialog2 = false"
+                                >
+                                    Save
+                                </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                            </v-dialog>
+                        </v-row>
+                        </template>
                     <br/>
                     <v-divider></v-divider>
                     <div class="text-center">
@@ -130,6 +187,7 @@ import firebaseApp from '../firebase';
 import { RSA } from 'hybrid-crypto-js';
 import firebase from "firebase/app";
 import "firebase/storage";
+var fileDownload = require('js-file-download');
 import './Group.css';
 export default {
   computed: {
@@ -141,9 +199,11 @@ export default {
   props: ['groupName'],
     data: () => ({
         dialog: false,
+        dialog2: false,
         groupData: [],
         uploadedFile: null,
         groupFiles: [],
+        downloadFileName: "",
     }),
     mounted(){
             this.getGroupData();
@@ -209,8 +269,28 @@ export default {
                 }).catch((error) => {
                     console.log(error);
                 });
+        },
+        downloadFile: function (){
+            var itemRef = firebase.storage().ref(this.groupName + "/" + this.downloadFileName);
+
+            itemRef.getDownloadURL()
+            // eslint-disable-next-line no-unused-vars
+            .then((url) => {
+
+                var xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                xhr.onload = () => {
+                var blob = xhr.response;
+                fileDownload((blob), this.downloadFileName)
+                };
+                xhr.open('GET', url);
+                xhr.send();
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         }
-   },
+    }
 };
 </script>
 <style scoped>
