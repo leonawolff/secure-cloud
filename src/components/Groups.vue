@@ -6,20 +6,53 @@
             <template v-if="user.loggedIn">
                 <div class="card-header">Your Groups</div>
                 <div class="card-body">
-                    <div>Bees</div>
+                    <div>wee</div>
                     <br/>
+                    <template>
                         <v-row>
-                            <v-btn @click="prompt=!prompt">New Group</v-btn>
+                            <v-dialog
+                            v-model="dialog"
+                            persistent
+                            max-width="600px"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                    color="primary"
+                                    dark
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    @click="dialog = true"
+                                    >
+                                    New Group
+                                    </v-btn>
+                                </template>
+                                <v-card>
+                                    <v-card-title>
+                                        <span class="headline">New Group</span>
+                                    </v-card-title>
+                                    <v-card-text>
+                                        <v-container>
+                                                <v-text-field
+                                                label="Group Name"
+                                                required
+                                                v-model="groupName"
+                                                ></v-text-field>
+                                        </v-container>
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn
+                                            color="blue darken-1"
+                                            text
+                                            @click="dialog = false; saveGroup(groupName)"
+                                        >
+                                            Save
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
                         </v-row>
-                    <v-dialog v-model="prompt">
-                        <v-card>
-                            <v-card-title>AAAAAAAAAAAAAAAAAAAAA</v-card-title>
-                            <v-card-text>
-                                <v-text-field v-model="groupName" label="Enter group name here"></v-text-field>
-                            </v-card-text>
-                        </v-card>
-
-                    </v-dialog>
+                    </template>
                 </div>
             </template>
             <template v-else>
@@ -32,6 +65,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import firebaseApp from '../firebase';
 export default {
     computed: {
         // map `this.user` to `this.$store.getters.user`
@@ -41,9 +75,25 @@ export default {
     },
     data: () => ({
         dialog: false,
-        prompt: false,
     }),
     methods: {
+        saveGroup: function (groupName) {
+            firebaseApp.firestore().collection("groups").doc(groupName).set({
+                name: groupName,
+                userEmails: this.user.data.email,
+            })
+            .then(() => {
+                console.log("Document successfully written!");
+            })
+            .catch((error) => {
+                console.error("Error writing document: ", error);
+            });
+        },
+        getGroups: function () {
+            var allGroups = firebaseApp.firestore().collection("groups");
+            var groups = allGroups.where("userEmails" == this.user.data.email);
+            console.log(groups);
+        }
    },
 }
 </script>
