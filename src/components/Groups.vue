@@ -8,7 +8,7 @@
                 <div class="card-body">
                     <ul id="v-for-object">
                         <li v-for="value in this.groups" :key="value.name">
-                            <router-link :to="`/group?groupName=${value.name}`">
+                            <router-link :to="{ name: 'Group', params: { groupName: value.name }}">
                                 {{value.name}}
                             </router-link >
                         </li>
@@ -50,7 +50,14 @@
                                         <v-btn
                                             color="blue darken-1"
                                             text
-                                            @click="dialog = false; saveGroup(groupName)"
+                                            @click="dialog = false;"
+                                        >
+                                            Cancel
+                                        </v-btn>
+                                        <v-btn
+                                            color="blue darken-1"
+                                            text
+                                            @click="dialog = false; saveGroup(groupName); getGroups()"
                                         >
                                             Save
                                         </v-btn>
@@ -100,6 +107,7 @@ export default {
             });
         },
         getGroups: function () {
+            this.groups = [];
             console.log("Loading groups");
             firebaseApp.firestore().collection("groups").where("userEmails", "==", this.user.data.email)
             .get()

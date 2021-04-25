@@ -33,9 +33,10 @@ const router = new Router({
         component: Groups
     },
     {
-        path: '/group',
+        path: '/group:groupName',
         name: 'Group',
-        component: Group
+        component: Group,
+        props: true
     }
 ]
 });
