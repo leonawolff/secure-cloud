@@ -17,10 +17,19 @@
         <ul class="navbar-nav mr-auto"></ul>
         <ul class="navbar-nav ml-auto">
           <template v-if="user.loggedIn">
-            <div class="nav-item">{{user.data.displayName}}</div>
-            <li class="nav-item">
-              <a class="nav-link" @click.prevent="signOut">Sign out</a>
-            </li>
+              <v-column>
+                <v-row>
+                  <li class="nav-item">
+                    <router-link to="groups" class="nav-link">Groups</router-link>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" @click.prevent="signOut">Sign out</a>
+                  </li>
+                </v-row>
+                <v-row>
+                  <div class="nav-item">Signed in: {{user.data.displayName}}</div>
+                </v-row>
+              </v-column>
           </template>
           <template v-else>
             <li class="nav-item">

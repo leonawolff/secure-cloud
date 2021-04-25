@@ -5,8 +5,15 @@
         <div class="card">
           <div class="card-header">Dashboard</div>
           <div class="card-body">
-            <div v-if="user" class="alert alert-success" role="alert">You are logged in!</div>
-            <button v-if="user" v-on:click="counter += 1">View Groups</button>
+            <template v-if="user.loggedIn">
+              <div v-if="user" class="alert alert-success" role="alert">You are logged in!</div>
+              <div class="text-center">
+                <v-btn v-if="user" elevation="2" to="/groups">View Groups</v-btn>
+              </div>
+            </template>
+            <template v-else>
+              <div class="alert alert-danger" role="alert">Please log in to access your dashboard</div>
+            </template>
           </div>
         </div>
       </div>
@@ -24,3 +31,6 @@ export default {
   }
 };
 </script>
+<style scoped>
+
+</style>

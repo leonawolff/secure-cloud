@@ -1,6 +1,7 @@
 import firebase from 'firebase';
 import 'firebase/firestore'; 
 import 'firebase/auth';
+import store from "./store";
 
   var firebaseConfig = {
     apiKey: "AIzaSyBeBmi12Jqr6W8e860GZNtvsYVWlZx3_9Y",
@@ -13,4 +14,9 @@ import 'firebase/auth';
 
   const firebaseApp = firebase.initializeApp(firebaseConfig);
 
+  firebaseApp.auth().onAuthStateChanged(user => {
+    store.dispatch("fetchUser", user);
+  });
+
   export default firebaseApp;
+  
