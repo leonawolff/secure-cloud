@@ -6,7 +6,13 @@
             <template v-if="user.loggedIn">
                 <div class="card-header">Your Groups</div>
                 <div class="card-body">
-                    <div>wee</div>
+                    <ul id="v-for-object">
+                        <li v-for="value in this.groups" :key="value.name">
+                            <router-link :to="`/group?groupName=${value.name}`">
+                                {{value.name}}
+                            </router-link >
+                        </li>
+                    </ul>
                     <br/>
                     <template>
                         <v-row>
@@ -75,7 +81,11 @@ export default {
     },
     data: () => ({
         dialog: false,
+        groups: [],
     }),
+    mounted(){
+            this.getGroups();
+        },
     methods: {
         saveGroup: function (groupName) {
             firebaseApp.firestore().collection("groups").doc(groupName).set({
@@ -90,9 +100,19 @@ export default {
             });
         },
         getGroups: function () {
-            var allGroups = firebaseApp.firestore().collection("groups");
-            var groups = allGroups.where("userEmails" == this.user.data.email);
-            console.log(groups);
+            console.log("Loading groups");
+            firebaseApp.firestore().collection("groups").where("userEmails", "==", this.user.data.email)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    this.groups.push(doc.data());
+                    console.log(this.groups);
+                });
+            })
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+            });
+
         }
    },
 }

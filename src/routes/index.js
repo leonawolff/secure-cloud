@@ -4,6 +4,7 @@ import Login from '../components/Login'
 import Register from '../components/Register'
 import Dashboard from '../components/Dashboard'
 import Groups from '../components/Groups'
+import Group from '../components/Group'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ const router = new Router({
         path: '/groups',
         name: 'Groups',
         component: Groups
+    },
+    {
+        path: '/group',
+        name: 'Group',
+        component: Group
     }
 ]
 });
