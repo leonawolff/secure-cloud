@@ -57,7 +57,7 @@
                                         <v-btn
                                             color="blue darken-1"
                                             text
-                                            @click="dialog = false; saveGroup(groupName); getGroups()"
+                                            @click="dialog = false; createKeyPairs(); getGroups()"
                                         >
                                             Save
                                         </v-btn>
@@ -79,6 +79,7 @@
 <script>
 import { mapGetters } from "vuex";
 import firebaseApp from '../firebase';
+import { RSA } from 'hybrid-crypto-js';
 export default {
     computed: {
         // map `this.user` to `this.$store.getters.user`
@@ -89,16 +90,27 @@ export default {
     data: () => ({
         dialog: false,
         groups: [],
+        groupName: "",
     }),
     mounted(){
             this.getGroups();
         },
     methods: {
-        saveGroup: function (groupName) {
-            firebaseApp.firestore().collection("groups").doc(groupName).set({
-                name: groupName,
+
+        createKeyPairs: function () {
+            var rsa = new RSA();
+            rsa.generateKeyPair(this.saveGroup);
+        },
+
+        saveGroup: function (keyPair) {
+            var publicK = keyPair.publicKey;
+            var privateK = keyPair.privateKey;
+            firebaseApp.firestore().collection("groups").doc(this.groupName).set({
+                name: this.groupName,
                 userNames: this.user.data.displayName,
                 userEmails: this.user.data.email,
+                publicKey: publicK,
+                privateKey: privateK,
             })
             .then(() => {
                 console.log("Document successfully written!");
@@ -107,6 +119,7 @@ export default {
                 console.error("Error writing document: ", error);
             });
         },
+
         getGroups: function () {
             this.groups = [];
             console.log("Loading groups");

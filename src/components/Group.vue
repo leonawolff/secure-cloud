@@ -183,9 +183,8 @@
 <script>
 import { mapGetters } from "vuex";
 import firebaseApp from '../firebase';
-// eslint-disable-next-line no-unused-vars
-import { RSA } from 'hybrid-crypto-js';
 import firebase from "firebase/app";
+import { Crypt } from 'hybrid-crypto-js';
 import "firebase/storage";
 var fileDownload = require('js-file-download');
 import './Group.css';
@@ -204,6 +203,7 @@ export default {
         uploadedFile: null,
         groupFiles: [],
         downloadFileName: "",
+        encryptedFile: null,
     }),
     mounted(){
             this.getGroupData();
@@ -241,20 +241,24 @@ export default {
         },
         getInputFile: function (uploadedFile){
             if(uploadedFile != null){
-                this.uploadFile();
+                this.encryptFile();
             }
         },
-        encryptFile: function (){
-           // var rsa = new RSA();
-
+        encryptFile: async function (){
+            var crypt = new Crypt();
+            var publicKey = this.groupData.publicKey;
+            const theFile = await this.uploadedFile.text();
+            this.encryptedFile = crypt.encrypt(publicKey, theFile);
+            this.uploadFile();
         },
+
         uploadFile: function (){
             var storageRef = firebase.storage().ref();
             console.log(this.uploadedFile.name);
             var fileFolderRef = storageRef.child(this.groupName + '/' + this.uploadedFile.name);
             // eslint-disable-next-line no-unused-vars
-            fileFolderRef.put(this.uploadedFile).then((snapshot) => {
-                console.log('Uploaded a blob or file!');
+            fileFolderRef.putString(this.encryptedFile).then((snapshot) => {
+                console.log('Uploaded file!');
             });
 
         },
@@ -272,16 +276,20 @@ export default {
         },
         downloadFile: function (){
             var itemRef = firebase.storage().ref(this.groupName + "/" + this.downloadFileName);
-
+            console.log(this.groupData.privateKey);
             itemRef.getDownloadURL()
             // eslint-disable-next-line no-unused-vars
             .then((url) => {
 
                 var xhr = new XMLHttpRequest();
-                xhr.responseType = 'blob';
+                xhr.responseType = 'text';
                 xhr.onload = () => {
-                var blob = xhr.response;
-                fileDownload((blob), this.downloadFileName)
+                var blob = xhr.response; 
+                console.log(blob);
+                var crypt = new Crypt();
+                var decrypted = crypt.decrypt(this.groupData.privateKey, blob);
+                console.log(decrypted);
+                    fileDownload((decrypted.message), this.downloadFileName)
                 };
                 xhr.open('GET', url);
                 xhr.send();
