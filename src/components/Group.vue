@@ -9,7 +9,8 @@
                     <div class="text-center">
                         Members:
                     </div>
-                    <div v-if="Array.isArray(this.groupData.userNames)" >
+                    <br/>
+                    <div v-if="Array.isArray(this.groupData.userNames)">
                         <ul id="v-for-object">
                             <li v-for="value in this.groupData.userNames" :key="value">
                                 <div>
@@ -78,6 +79,35 @@
                                 </v-card>
                             </v-dialog>
                     <v-divider></v-divider>
+                    <div>Group Files</div>
+                    <div v-if="this.groupFiles != null && this.groupFiles.length > 1">
+                        <ul id="v-for-object">
+                            <li v-for="value in this.groupFiles.name" :key="value">
+                                <div>
+                                    {{value}}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-if="this.groupFiles.length == 1">
+                        {{this.groupFiles[0].name}}
+                    </div>
+                    <v-divider></v-divider>
+                    <div>Upload File</div>
+                    <br/>
+                    <v-file-input
+                    truncate-length="20"
+                    className="fileUpload"
+                    v-model="uploadedFile"
+                    ></v-file-input>
+                    <v-btn
+                    color="green darken-1"
+                    text
+                    outline
+                    @click="getInputFile(uploadedFile)"
+                    >
+                    Encrypt File
+                </v-btn>
                     <br/>
                     <v-divider></v-divider>
                     <div class="text-center">
@@ -96,6 +126,11 @@
 <script>
 import { mapGetters } from "vuex";
 import firebaseApp from '../firebase';
+// eslint-disable-next-line no-unused-vars
+import { RSA } from 'hybrid-crypto-js';
+import firebase from "firebase/app";
+import "firebase/storage";
+import './Group.css';
 export default {
   computed: {
     // map `this.user` to `this.$store.getters.user`
@@ -107,9 +142,12 @@ export default {
     data: () => ({
         dialog: false,
         groupData: [],
+        uploadedFile: null,
+        groupFiles: [],
     }),
     mounted(){
             this.getGroupData();
+            this.getGroupFiles();
         },
     methods: {
         getGroupData: function () {
@@ -140,6 +178,37 @@ export default {
                 firebaseApp.firestore().collection("groups").doc(this.groupName).update({userNames: this.groupData.userNames}, { merge: true });
             }
             
+        },
+        getInputFile: function (uploadedFile){
+            if(uploadedFile != null){
+                this.uploadFile();
+            }
+        },
+        encryptFile: function (){
+           // var rsa = new RSA();
+
+        },
+        uploadFile: function (){
+            var storageRef = firebase.storage().ref();
+            console.log(this.uploadedFile.name);
+            var fileFolderRef = storageRef.child(this.groupName + '/' + this.uploadedFile.name);
+            // eslint-disable-next-line no-unused-vars
+            fileFolderRef.put(this.uploadedFile).then((snapshot) => {
+                console.log('Uploaded a blob or file!');
+            });
+
+        },
+        getGroupFiles: function (){
+            var groupFolderRef = firebase.storage().ref(this.groupName);
+            groupFolderRef.listAll()
+                .then((res) => {
+                    res.items.forEach((itemRef) => {
+                        this.groupFiles.push(itemRef);
+                        console.log(itemRef);
+                    });
+                }).catch((error) => {
+                    console.log(error);
+                });
         }
    },
 };

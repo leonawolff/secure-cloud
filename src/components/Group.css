@@ -1,0 +1,11 @@
+.card-body{
+    text-align:center;
+}
+
+li {
+    list-style-type : '';
+  }
+
+.fileUpload{
+    width: 50%;
+}
