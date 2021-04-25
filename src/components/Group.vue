@@ -9,13 +9,74 @@
                     <div class="text-center">
                         Members:
                     </div>
-                    <ul id="v-for-object">
-                        <li v-for="value in this.groupData.userEmails" :key="value.name">
-                            <router-link :to="{ name: 'Group', params: { groupName: value.name }}">
-                                {{value.name}}
-                            </router-link >
-                        </li>
-                    </ul>
+                    <div v-if="Array.isArray(this.groupData.userNames)" >
+                        <ul id="v-for-object">
+                            <li v-for="value in this.groupData.userNames" :key="value">
+                                <div>
+                                    {{value}}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-else >
+                        <div>
+                            {{this.groupData.userNames}}
+                        </div>
+                        <br/>
+                    </div>
+                     <v-dialog
+                            v-model="dialog"
+                            persistent
+                            max-width="600px"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                    color="primary"
+                                    dark
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    @click="dialog = true"
+                                    >
+                                    Add Member
+                                    </v-btn>
+                                </template>
+                                <v-card>
+                                    <v-card-title>
+                                        <span class="headline">Add Group Member</span>
+                                    </v-card-title>
+                                    <v-card-text>
+                                        <v-container>
+                                                <v-text-field
+                                                label="Name"
+                                                required
+                                                v-model="newMemberName"
+                                                ></v-text-field>
+                                                <v-text-field
+                                                label="Email"
+                                                required
+                                                v-model="newMemberEmail"
+                                                ></v-text-field>
+                                        </v-container>
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn
+                                            color="blue darken-1"
+                                            text
+                                            @click="dialog = false;"
+                                        >
+                                            Cancel
+                                        </v-btn>
+                                        <v-btn
+                                            color="blue darken-1"
+                                            text
+                                            @click="dialog = false; saveMember(newMemberName, newMemberEmail); getGroupData()"
+                                        >
+                                            Save
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
                     <v-divider></v-divider>
                     <br/>
                     <v-divider></v-divider>
@@ -64,6 +125,21 @@ export default {
             .catch((error) => {
                 console.log("Error getting documents: ", error);
             });
+        },
+        saveMember: function (newMemberName, newMemberEmail) {
+            if (!Array.isArray(this.groupData.userNames) && !Array.isArray(this.groupData.userEmails)){
+                var newUserNames = [this.groupData.userNames, newMemberName];
+                var newEmails = [this.groupData.userEmails, newMemberEmail]
+                firebaseApp.firestore().collection("groups").doc(this.groupName).update({userEmails: newEmails}, { merge: true });
+                firebaseApp.firestore().collection("groups").doc(this.groupName).update({userNames: newUserNames}, { merge: true });
+            }
+            else{
+                this.groupData.userNames.push(newMemberName);
+                this.groupData.userEmails.push(newMemberEmail);
+                firebaseApp.firestore().collection("groups").doc(this.groupName).update({userEmails: this.groupData.userEmails}, { merge: true });
+                firebaseApp.firestore().collection("groups").doc(this.groupName).update({userNames: this.groupData.userNames}, { merge: true });
+            }
+            
         }
    },
 };

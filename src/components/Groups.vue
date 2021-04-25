@@ -97,6 +97,7 @@ export default {
         saveGroup: function (groupName) {
             firebaseApp.firestore().collection("groups").doc(groupName).set({
                 name: groupName,
+                userNames: this.user.data.displayName,
                 userEmails: this.user.data.email,
             })
             .then(() => {
@@ -110,6 +111,17 @@ export default {
             this.groups = [];
             console.log("Loading groups");
             firebaseApp.firestore().collection("groups").where("userEmails", "==", this.user.data.email)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    this.groups.push(doc.data());
+                    console.log(this.groups);
+                });
+            })
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+            });
+            firebaseApp.firestore().collection("groups").where("userEmails", "array-contains", this.user.data.email)
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {

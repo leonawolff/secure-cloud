@@ -72,7 +72,7 @@ export default {
         .auth()
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then(function() {
-          router.push({ path: 'dashboard' })
+          router.push({ name: 'Dashboard' })
         })
         .catch(function(err) {
           this.error = err.message;
