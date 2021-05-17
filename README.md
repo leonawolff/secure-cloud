@@ -1,5 +1,7 @@
 # secure-cloud
 
+Secure cloud storage project for Advanced Telecommunications Module
+
 ## Project setup
 ```
 npm install
